@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,57 +14,154 @@
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
-        body{
-            margin:0;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-            font-size:48px;
-            font-family:sans-serif;
-            background:#f5f5f5;
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
         }
-        #message {
-            font-size: 48px;
-            margin-bottom: 40px;
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            font-size: 20px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
         }
 
         button {
-            font-size: 24px;
-            padding: 15px 40px;
-            border-radius: 10px;
-            border: none;
-            background-color: #2196f3;
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            background: #2196f3;
             color: white;
+            border: none;
+            border-radius: 10px;
         }
 
-        button:active {
-            background-color: #1565c0;
+        .word {
+            background: white;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 20px;
         }
     </style>
 </head>
+
 <body>
 
-<div id="message">
-    Hello World!
-</div>
 
-<button onclick="changeMessage()">
-    押してね
+<h1>単語帳</h1>
+
+
+<input id="word"
+placeholder="英単語">
+
+
+<input id="meaning"
+placeholder="日本語の意味">
+
+
+<button onclick="addWord()">
+保存
 </button>
 
+
+<div id="list"></div>
+
+
+
 <script>
-function changeMessage() {
 
-    document.getElementById("message").innerHTML =
-        "Hello PWA!";
+
+let words =
+JSON.parse(localStorage.getItem("words"))
+|| [];
+
+
+
+function addWord(){
+
+    let word =
+    document.getElementById("word").value;
+
+
+    let meaning =
+    document.getElementById("meaning").value;
+
+
+    if(word==="" || meaning===""){
+        return;
+    }
+
+
+    words.push({
+        word:word,
+        meaning:meaning
+    });
+
+
+    localStorage.setItem(
+        "words",
+        JSON.stringify(words)
+    );
+
+
+    document.getElementById("word").value="";
+    document.getElementById("meaning").value="";
+
+
+    showWords();
 
 }
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
+
+
+function showWords(){
+
+    let html="";
+
+
+    words.forEach(function(item){
+
+        html += `
+        <div class="word">
+        ${item.word}<br>
+        ↓<br>
+        ${item.meaning}
+        </div>
+        `;
+
+    });
+
+
+    document.getElementById("list")
+    .innerHTML=html;
+
 }
+
+
+
+showWords();
+
+
+
+if ('serviceWorker' in navigator){
+
+navigator.serviceWorker.register(
+'service-worker.js'
+);
+
+}
+
+
 </script>
 
+
 </body>
+
 </html>
