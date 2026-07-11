@@ -91,7 +91,29 @@ let current=0;
 
 let score=0;
 
+// タイマー開始
+let startTime = Date.now();
 
+function formatTime(seconds){
+
+let min =
+Math.floor(seconds / 60);
+
+let sec =
+seconds % 60;
+
+
+return (
+String(min).padStart(2,"0")
++
+"分"
++
+String(sec).padStart(2,"0")
++
+"秒"
+);
+
+}
 
 function showQuestion(){
 
@@ -244,6 +266,16 @@ showQuestion();
 else{
 
 
+let endTime = Date.now();
+
+
+let elapsed =
+Math.floor(
+(endTime - startTime) / 1000
+);
+
+
+
 document.getElementById("question")
 .innerHTML="終了";
 
@@ -255,10 +287,18 @@ document.getElementById("choices")
 document.getElementById("result")
 .innerHTML=
 
-score+
-" / "+
-questions.length+
-" 正解";
+`
+<h2>結果</h2>
+
+${questions.length}問中
+${score}問正解
+
+<br><br>
+
+時間：
+${formatTime(elapsed)}
+
+`;
 
 }
 
