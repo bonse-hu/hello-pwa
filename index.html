@@ -3,21 +3,34 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>三角関数トレーニング</title>
+    <title>三角関数トレーニング</title>
 
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 
-<link rel="apple-touch-icon"
-href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
 
-<link rel="stylesheet"
-href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.MathJax = {
+
+            tex: {
+
+                inlineMath:
+                    [['$', '$']]
+
+            }
+
+        };
+    </script>
+
+
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
 
 </head>
 
@@ -25,42 +38,42 @@ href="style.css">
 <body>
 
 
-<div class="container">
+    <div class="container">
 
-<h1>
-三角関数トレーニング
-</h1>
-
-
-<div id="question">
-</div>
+        <h1>
+            三角関数トレーニング
+        </h1>
 
 
-<div id="choices">
-</div>
+        <div id="question">
+        </div>
 
 
-<div id="result">
-</div>
-<canvas id="historyChart"></canvas>
-
-</div>
+        <div id="choices">
+        </div>
 
 
-<script src="app.js"></script>
+        <div id="result">
+        </div>
+        <canvas id="historyChart"></canvas>
+
+    </div>
 
 
-<script>
+    <script src="app.js"></script>
 
-if ('serviceWorker' in navigator){
 
-navigator.serviceWorker.register(
-'service-worker.js'
-);
+    <script>
 
-}
+        if ('serviceWorker' in navigator) {
 
-</script>
+            navigator.serviceWorker.register(
+                'service-worker.js'
+            );
+
+        }
+
+    </script>
 
 
 </body>

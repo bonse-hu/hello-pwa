@@ -1,13 +1,19 @@
 const allQuestions = [
 
     {
-        question: "sinA cosB を積和公式で表せせ",
+        question:
+            "$\\sin A\\cos B$ を積和公式で表せ",
 
         choices: [
-            "1/2{sin(A+B)+sin(A-B)}",
-            "1/2{sin(A+B)-sin(A-B)}",
-            "sin(A+B)",
-            "cos(A+B)"
+
+            "$\\frac{1}{2}\\{\\sin(A+B)+\\sin(A-B)\\}$",
+
+            "$\\frac{1}{2}\\{\\sin(A+B)-\\sin(A-B)\\}$",
+
+            "$\\sin(A+B)$",
+
+            "$\\cos(A+B)$"
+
         ],
 
         answer: 0
@@ -366,7 +372,7 @@ ${choice}
 
     document.getElementById("choices")
         .innerHTML = html;
-
+    MathJax.typeset();
 
 }
 
