@@ -91,3 +91,41 @@ text-align:center;
 margin-top:20px;
 
 }
+
+/* 正解・不正解表示 */
+
+.correct {
+
+background:#4caf50 !important;
+
+}
+
+
+.wrong {
+
+background:#f44336 !important;
+
+}
+
+
+.next-button {
+
+display:block;
+
+width:100%;
+
+padding:15px;
+
+margin-top:20px;
+
+font-size:18px;
+
+border-radius:10px;
+
+border:none;
+
+background:#555;
+
+color:white;
+
+}

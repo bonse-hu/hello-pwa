@@ -1,158 +1,113 @@
 const allQuestions = [
 
 {
-question:
-"sinA cosB を積和公式で表せ",
+question:"sinA cosB を積和公式で表せ",
 
 choices:[
-
 "1/2{sin(A+B)+sin(A-B)}",
-
 "1/2{sin(A+B)-sin(A-B)}",
-
 "sin(A+B)",
-
 "cos(A+B)"
-
 ],
 
 answer:0
-
 },
 
 
 {
-
-question:
-"cosA cosB を積和公式で表せ",
+question:"cosA cosB を積和公式で表せ",
 
 choices:[
-
 "1/2{cos(A+B)+cos(A-B)}",
-
 "1/2{sin(A+B)+sin(A-B)}",
-
 "cos(A+B)",
-
 "sin(A+B)"
-
 ],
 
 answer:0
-
 },
 
 
 {
-
-question:
-"sinA sinB を積和公式で表せ",
+question:"sinA sinB を積和公式で表せ",
 
 choices:[
-
 "1/2{cos(A-B)-cos(A+B)}",
-
 "1/2{cos(A+B)+cos(A-B)}",
-
 "sin(A+B)",
-
 "cos(A-B)"
-
 ],
 
 answer:0
-
 },
 
 
 {
-
-question:
-"sinA+sinB の和積公式は？",
+question:"sinA+sinB の和積公式は？",
 
 choices:[
-
 "2sin((A+B)/2)cos((A-B)/2)",
-
 "2cos((A+B)/2)sin((A-B)/2)",
-
 "sin(A+B)",
-
 "cos(A+B)"
-
 ],
 
 answer:0
-
 },
 
 
 {
-
-question:
-"cosA+cosB の和積公式は？",
+question:"cosA+cosB の和積公式は？",
 
 choices:[
-
 "2cos((A+B)/2)cos((A-B)/2)",
-
 "2sin((A+B)/2)sin((A-B)/2)",
-
 "cos(A+B)",
-
 "sin(A+B)"
-
 ],
 
 answer:0
-
 }
 
 ];
 
 
 
-// --------------------
-// ランダム5問作成
-// --------------------
-
 function shuffle(array){
 
-return array
-.sort(
+return array.sort(
 ()=>Math.random()-0.5
 );
 
 }
 
 
-
 const questions =
-shuffle([...allQuestions])
-.slice(0,5);
+shuffle([...allQuestions]).slice(0,5);
 
 
 
-// --------------------
+let current=0;
 
-let current = 0;
-
-let score = 0;
+let score=0;
 
 
 
 function showQuestion(){
 
+
 document.activeElement.blur();
-let q = questions[current];
+
+
+let q=questions[current];
 
 
 document.getElementById("question")
-.innerHTML =
+.innerHTML=
 
-"第" +
-(current+1) +
-"問<br><br>" +
+"第"+
+(current+1)+
+"問<br><br>"+
 q.question;
 
 
@@ -164,10 +119,11 @@ q.choices.forEach(
 function(choice,index){
 
 
-html +=
+html+=`
 
-`
-<button class="choice"
+<button 
+class="choice"
+id="choice${index}"
 onclick="answer(${index})">
 
 ${choice}
@@ -180,11 +136,10 @@ ${choice}
 
 
 document.getElementById("choices")
-.innerHTML = html;
+.innerHTML=html;
 
 
 }
-
 
 
 
@@ -192,14 +147,92 @@ document.getElementById("choices")
 function answer(index){
 
 
-if(index === questions[current].answer){
+let buttons =
+document.querySelectorAll(".choice");
+
+
+// 2回押し防止
+
+buttons.forEach(
+button=>{
+button.disabled=true;
+});
+
+
+
+if(index===questions[current].answer){
 
 score++;
+
+document
+.getElementById("choice"+index)
+.classList.add("correct");
+
+
+}
+
+else{
+
+
+document
+.getElementById("choice"+index)
+.classList.add("wrong");
+
+
+document
+.getElementById(
+"choice"+questions[current].answer
+)
+.classList.add("correct");
+
 
 }
 
 
+
+document.getElementById("result")
+.innerHTML=
+
+index===questions[current].answer
+
+?
+
+"正解！"
+
+:
+
+"不正解<br>正解は上の緑色です";
+
+
+
+document.getElementById("choices")
+.innerHTML +=
+
+`
+
+<button 
+class="next-button"
+onclick="nextQuestion()">
+
+次の問題
+
+</button>
+
+`;
+
+}
+
+
+
+
+function nextQuestion(){
+
+
 current++;
+
+
+document.getElementById("result")
+.innerHTML="";
 
 
 if(current < questions.length){
@@ -229,9 +262,7 @@ questions.length+
 
 }
 
-
 }
-
 
 
 
