@@ -2,153 +2,54 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Hello PWA</title>
+<meta charset="UTF-8">
 
-    <link rel="manifest" href="manifest.json">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#2196f3">
+<title>三角関数トレーニング</title>
 
-    <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
 
-    <style>
-        body {
-            font-family: sans-serif;
-            padding: 20px;
-            background: #f5f5f5;
-        }
+<link rel="apple-touch-icon"
+href="icon-192.png">
 
-        h1 {
-            text-align: center;
-        }
+<link rel="stylesheet"
+href="style.css">
 
-        input {
-            width: 100%;
-            font-size: 20px;
-            padding: 10px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            font-size: 20px;
-            background: #2196f3;
-            color: white;
-            border: none;
-            border-radius: 10px;
-        }
-
-        .word {
-            background: white;
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 20px;
-        }
-    </style>
 </head>
+
 
 <body>
 
 
-<h1>単語帳</h1>
+<div class="container">
+
+<h1>
+三角関数トレーニング
+</h1>
 
 
-<input id="word"
-placeholder="英単語">
+<div id="question">
+</div>
 
 
-<input id="meaning"
-placeholder="日本語の意味">
+<div id="choices">
+</div>
 
 
-<button onclick="addWord()">
-保存
-</button>
+<div id="result">
+</div>
 
 
-<div id="list"></div>
+</div>
 
+
+<script src="app.js"></script>
 
 
 <script>
-
-
-let words =
-JSON.parse(localStorage.getItem("words"))
-|| [];
-
-
-
-function addWord(){
-
-    let word =
-    document.getElementById("word").value;
-
-
-    let meaning =
-    document.getElementById("meaning").value;
-
-
-    if(word==="" || meaning===""){
-        return;
-    }
-
-
-    words.push({
-        word:word,
-        meaning:meaning
-    });
-
-
-    localStorage.setItem(
-        "words",
-        JSON.stringify(words)
-    );
-
-
-    document.getElementById("word").value="";
-    document.getElementById("meaning").value="";
-
-
-    showWords();
-
-}
-
-
-
-function showWords(){
-
-    let html="";
-
-
-    words.forEach(function(item){
-
-        html += `
-        <div class="word">
-        ${item.word}<br>
-        ↓<br>
-        ${item.meaning}
-        </div>
-        `;
-
-    });
-
-
-    document.getElementById("list")
-    .innerHTML=html;
-
-}
-
-
-
-showWords();
-
-
 
 if ('serviceWorker' in navigator){
 
@@ -157,7 +58,6 @@ navigator.serviceWorker.register(
 );
 
 }
-
 
 </script>
 
