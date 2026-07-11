@@ -1,7 +1,7 @@
 const allQuestions = [
 
 {
-question:"sinA cosB を積和公式で表せ",
+question:"sinA cosB を積和公式で表せせ",
 
 choices:[
 "1/2{sin(A+B)+sin(A-B)}",
