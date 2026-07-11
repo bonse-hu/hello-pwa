@@ -143,7 +143,7 @@ let score = 0;
 
 function showQuestion(){
 
-
+document.activeElement.blur();
 let q = questions[current];
 
 
