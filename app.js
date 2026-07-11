@@ -210,6 +210,118 @@ ${formatTime(item.time)}
 
 }
 
+function showChart() {
+
+
+    let history =
+        JSON.parse(
+            localStorage.getItem("quizHistory")
+        )
+        || [];
+
+
+
+    let labels = [];
+
+    let scores = [];
+
+
+
+    history.forEach(
+        (item, index) => {
+
+
+            labels.push(
+                (index + 1) + "回目"
+            );
+
+
+            scores.push(
+                item.score
+                /
+                5
+                *
+                100
+            );
+
+
+        });
+
+
+
+    new Chart(
+
+        document
+            .getElementById("historyChart"),
+
+
+        {
+
+            type: "line",
+
+
+            data: {
+
+
+                labels: labels,
+
+
+                datasets: [{
+
+
+                    label: "正答率 (%)",
+
+
+                    data: scores,
+
+
+                    borderColor:
+                        "blue",
+
+
+                    backgroundColor:
+                        "lightblue",
+
+
+                    tension: 0.3
+
+
+                }]
+
+
+            },
+
+
+
+            options: {
+
+
+                scales: {
+
+
+                    y: {
+
+
+                        min: 0,
+
+                        max: 100
+
+                    }
+
+
+                }
+
+
+            }
+
+
+        }
+
+    );
+
+
+}
+
 function showQuestion() {
 
 
@@ -394,7 +506,8 @@ ${score}問正解
 ${formatTime(elapsed)}
 
 `;
-showHistory();
+        showHistory();
+        showChart();
 
     }
 
