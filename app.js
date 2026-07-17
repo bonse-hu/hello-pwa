@@ -347,7 +347,7 @@ function nextQuestion() {
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
         document.getElementById('question').innerHTML = '終了！';
         
-        // ボタン類を表示
+        // 結果の表示
         document.getElementById('choices').innerHTML = `
             <div style="text-align:center; margin-bottom:20px;">
                 ${questions.length}問中 ${score}問正解<br>
@@ -357,15 +357,16 @@ function nextQuestion() {
             <button class="next-button" style="background:#888; margin-top:10px;" onclick="resetHistory()">履歴をリセット</button>
         `;
 
-        saveHistory(score, elapsed);
-
-        // 全問正解時のみグラフと履歴を表示
+        // 【ここを修正】スコアが5（満点）の場合のみ保存し、グラフと履歴を表示
         if (score === 5) {
+            saveHistory(score, elapsed); 
             showChart();
-            showHistory(); // グラフの後に履歴を表示
+            showHistory();
         } else {
-            document.getElementById('historyChart').style.display = 'none';
-            document.getElementById('historyList').innerHTML = '';
+            // 満点でない場合は、グラフを隠し、保存も行わない
+            const chartCanvas = document.getElementById('historyChart');
+            if (chartCanvas) chartCanvas.style.display = 'none';
+            // 必要に応じて「全問正解時のみ記録されます」といったメッセージを出すのも良いでしょう
         }
     }
 }
