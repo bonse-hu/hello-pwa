@@ -340,14 +340,14 @@ function answer(index) {
 function nextQuestion() {
     current++;
     document.getElementById('result').innerHTML = '';
-    
+
     if (current < questions.length) {
         showQuestion();
     } else {
+        // 1. クイズ終了時の計測と結果表示
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
         document.getElementById('question').innerHTML = '終了！';
         
-        // 結果の表示
         document.getElementById('choices').innerHTML = `
             <div style="text-align:center; margin-bottom:20px;">
                 ${questions.length}問中 ${score}問正解<br>
@@ -357,16 +357,18 @@ function nextQuestion() {
             <button class="next-button" style="background:#888; margin-top:10px;" onclick="resetHistory()">履歴をリセット</button>
         `;
 
-        // 【ここを修正】スコアが5（満点）の場合のみ保存し、グラフと履歴を表示
+        // 2. 【最重要】スコアが5（全問正解）の場合のみ、履歴を保存・表示する
         if (score === 5) {
-            saveHistory(score, elapsed); 
-            showChart();
-            showHistory();
+            saveHistory(score, elapsed); // 履歴をlocalStorageに書き込む
+            showHistory();               // 履歴リストを更新表示
+            showChart();                 // グラフを更新表示
         } else {
-            // 満点でない場合は、グラフを隠し、保存も行わない
+            // 全問正解でない場合は、過去のグラフや履歴リストを隠す（または更新しない）
             const chartCanvas = document.getElementById('historyChart');
             if (chartCanvas) chartCanvas.style.display = 'none';
-            // 必要に応じて「全問正解時のみ記録されます」といったメッセージを出すのも良いでしょう
+            
+            const historyList = document.getElementById('historyList');
+            if (historyList) historyList.innerHTML = '<p style="text-align:center;">全問正解時のみ記録が保存されます。</p>';
         }
     }
 }
