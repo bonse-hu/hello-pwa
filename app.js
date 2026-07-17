@@ -226,164 +226,64 @@ function saveHistory(score, time) {
 
 }
 
+// 履歴リストを表示する関数 (表示先をグラフの下に指定)
 function showHistory() {
+    const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    // 履歴を表示するための専用エリア (historyList) に書き込む
+    const historyDiv = document.getElementById('historyList'); 
+    if (!historyDiv) return;
 
-
-    let history =
-        JSON.parse(
-            localStorage.getItem("quizHistory")
-        )
-        || [];
-
-
-    let html =
-        "<h2>履歴</h2>";
-
-
-
-    history.forEach(
-        item => {
-
-
-            html +=
-
-                `
-<div class="history">
-
-${item.date}
-
-<br>
-
-${item.score}/5 正解
-
-<br>
-
-${formatTime(item.time)}
-
-</div>
-
-`;
-
-
-        });
-
-
-    document.getElementById("result")
-        .innerHTML += html;
-
-
+    historyDiv.innerHTML = '<h3>過去の記録</h3>';
+    history.reverse().forEach(item => {
+        historyDiv.innerHTML += `
+            <div class="history-item" style="background:white; padding:10px; margin-top:5px; border-radius:5px;">
+                ${item.date} | ${item.score}/5 正解 | ${formatTime(item.time)}
+            </div>
+        `;
+    });
 }
 
+// グラフを表示する関数 (縦軸を秒数に変更)
 function showChart() {
+    const history = JSON.parse(localStorage.getItem('quizHistory') || '[]');
+    if (history.length === 0) return;
 
+    const canvas = document.getElementById('historyChart');
+    canvas.style.display = 'block'; // グラフを表示
+    const ctx = canvas.getContext('2d');
 
-    let history =
-        JSON.parse(
-            localStorage.getItem("quizHistory")
-        )
-        || [];
+    // データセットを「点数」から「時間（秒）」に変更 [1]
+    const data = history.map(item => item.time);
+    const labels = history.map((_, i) => `${i + 1}回目`);
 
+    if (window.myChart) window.myChart.destroy();
 
-
-    let labels = [];
-
-    let scores = [];
-
-
-
-    history.forEach(
-        (item, index) => {
-
-
-            labels.push(
-                (index + 1) + "回目"
-            );
-
-
-            scores.push(
-                item.score
-                /
-                5
-                *
-                100
-            );
-
-
-        });
-
-
-
-    new Chart(
-
-        document
-            .getElementById("historyChart"),
-
-
-        {
-
-            type: "line",
-
-
-            data: {
-
-
-                labels: labels,
-
-
-                datasets: [{
-
-
-                    label: "正答率 (%)",
-
-
-                    data: scores,
-
-
-                    borderColor:
-                        "blue",
-
-
-                    backgroundColor:
-                        "lightblue",
-
-
-                    tension: 0.3
-
-
-                }]
-
-
-            },
-
-
-
-            options: {
-
-
-                scales: {
-
-
-                    y: {
-
-
-                        min: 0,
-
-                        max: 100
-
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '経過時間 (秒)',
+                data: data,
+                borderColor: '#2196f3',
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '時間 (秒)'
                     }
-
-
                 }
-
-
             }
-
-
         }
-
-    );
-
-
+    });
 }
 
 // 問題の表示処理 [1]
@@ -442,13 +342,12 @@ function nextQuestion() {
     document.getElementById('result').innerHTML = '';
     
     if (current < questions.length) {
-        showQuestion(); [1]
+        showQuestion();
     } else {
-        // クイズ終了時の処理
-        const elapsed = Math.floor((Date.now() - startTime) / 1000); [1]
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
         document.getElementById('question').innerHTML = '終了！';
         
-        // 【修正】結果表示に「もう一度やる」と「履歴リセット」ボタンを追加
+        // ボタン類を表示
         document.getElementById('choices').innerHTML = `
             <div style="text-align:center; margin-bottom:20px;">
                 ${questions.length}問中 ${score}問正解<br>
@@ -456,14 +355,17 @@ function nextQuestion() {
             </div>
             <button class="next-button" onclick="restartQuiz()">もう一度やる</button>
             <button class="next-button" style="background:#888; margin-top:10px;" onclick="resetHistory()">履歴をリセット</button>
-        `; [1, 2]
+        `;
 
-        saveHistory(score, elapsed); [3]
-        showHistory(); [3]
-        
-        // 前回の回答に基づき、全問正解時のみグラフ表示
+        saveHistory(score, elapsed);
+
+        // 全問正解時のみグラフと履歴を表示
         if (score === 5) {
-            showChart(); [3]
+            showChart();
+            showHistory(); // グラフの後に履歴を表示
+        } else {
+            document.getElementById('historyChart').style.display = 'none';
+            document.getElementById('historyList').innerHTML = '';
         }
     }
 }
