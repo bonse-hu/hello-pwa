@@ -77,27 +77,85 @@ const allQuestions = [
 
 ];
 
+function generateQuestions(count) {
+    const questions = [];
+    const types = ['sin_cos', 'cos_sin', 'cos_cos', 'sin_sin'];
 
+    for (let i = 0; i < count; i++) {
+        const type = types[Math.floor(Math.random() * types.length)];
+        // 係数 a, b をランダムに決定 (a > b とすることで差を正にする)
+        let a = Math.floor(Math.random() * 8) + 2; // 2～9
+        let b = Math.floor(Math.random() * (a - 1)) + 1; // 1～a-1
+        
+        let qText = "";
+        let correctAns = "";
+        let dummy = [];
 
+        // 積和の公式の適用 (※ここから下の数式ロジックはソース外の追加情報です)
+        switch (type) {
+            case 'sin_cos': // sin A cos B = 1/2(sin(A+B) + sin(A-B))
+                qText = `\\sin ${a}x \\cos ${b}x`;
+                correctAns = `\\frac{1}{2}(\\sin ${a+b}x + \\sin ${a-b}x)`;
+                dummy = [
+                    `\\frac{1}{2}(\\sin ${a+b}x - \\sin ${a-b}x)`,
+                    `\\frac{1}{2}(\\cos ${a+b}x + \\cos ${a-b}x)`,
+                    `\\sin ${a+b}x + \\sin ${a-b}x`
+                ];
+                break;
+            case 'cos_sin': // cos A sin B = 1/2(sin(A+B) - sin(A-B))
+                qText = `\\cos ${a}x \\sin ${b}x`;
+                correctAns = `\\frac{1}{2}(\\sin ${a+b}x - \\sin ${a-b}x)`;
+                dummy = [
+                    `\\frac{1}{2}(\\sin ${a+b}x + \\sin ${a-b}x)`,
+                    `\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`,
+                    `\\frac{1}{2}(\\sin ${a+a}x - \\sin ${b+b}x)`
+                ];
+                break;
+            case 'cos_cos': // cos A cos B = 1/2(cos(A+B) + cos(A-B))
+                qText = `\\cos ${a}x \\cos ${b}x`;
+                correctAns = `\\frac{1}{2}(\\cos ${a+b}x + \\cos ${a-b}x)`;
+                dummy = [
+                    `\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`,
+                    `\\frac{1}{2}(\\sin ${a+b}x + \\sin ${a-b}x)`,
+                    `\\cos ${a+b}x + \\cos ${a-b}x`
+                ];
+                break;
+            case 'sin_sin': // sin A sin B = -1/2(cos(A+B) - cos(A-B))
+                qText = `\\sin ${a}x \\sin ${b}x`;
+                correctAns = `-\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`;
+                dummy = [
+                    `\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`,
+                    `-\\frac{1}{2}(\\cos ${a+b}x + \\cos ${a-b}x)`,
+                    `-\\frac{1}{2}(\\sin ${a+b}x - \\sin ${a-b}x)`
+                ];
+                break;
+        }
+
+        // 選択肢のシャッフル処理 [1]
+        let choices = shuffle([correctAns, ...dummy]);
+        questions.push({
+            question: `$ ${qText} = ?$`,
+            choices: choices.map(c => `$ ${c} $`),
+            answer: choices.indexOf(correctAns)
+        });
+    }
+    return questions;
+}
+
+// 配列をシャッフルする補助関数 [1]
 function shuffle(array) {
-
-    return array.sort(
-        () => Math.random() - 0.5
-    );
-
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }
 
 
-const questions =
-    shuffle([...allQuestions]).slice(0, 5);
-
-
-
+// 変数と初期化 [1]
+const questions = generateQuestions(5); // 毎回ランダムな5問を生成
 let current = 0;
-
 let score = 0;
-
-// タイマー開始
 let startTime = Date.now();
 
 function formatTime(seconds) {
@@ -328,197 +386,80 @@ function showChart() {
 
 }
 
+// 問題の表示処理 [1]
 function showQuestion() {
+    const q = questions[current];
+    document.getElementById('question').innerHTML = q.question;
+    const choicesDiv = document.getElementById('choices');
+    choicesDiv.innerHTML = '';
+    
+    q.choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice';
+        btn.id = `choice${index}`;
+        btn.innerHTML = choice;
+        btn.onclick = () => answer(index);
+        choicesDiv.appendChild(btn);
+    });
 
-
-    document.activeElement.blur();
-
-
-    let q = questions[current];
-
-
-    document.getElementById("question")
-        .innerHTML =
-
-        "第" +
-        (current + 1) +
-        "問<br><br>" +
-        q.question;
-
-
-
-    let html = "";
-
-
-    q.choices.forEach(
-        function (choice, index) {
-
-
-            html += `
-
-<button 
-class="choice"
-id="choice${index}"
-onclick="answer(${index})">
-
-${choice}
-
-</button>
-
-`;
-
-        });
-
-
-    document.getElementById("choices")
-        .innerHTML = html;
-    MathJax.typeset();
-
+    // 数式の再描画 (MathJax 3.x 対応)
+    if (window.MathJax) {
+        MathJax.typeset();
+    }
 }
 
 
 
-
+// 解答判定処理 [1]
 function answer(index) {
+    const q = questions[current];
+    const resultDiv = document.getElementById('result');
+    const buttons = document.querySelectorAll('.choice');
+    
+    // 全ボタンを無効化
+    buttons.forEach(btn => btn.disabled = true);
 
-
-    let buttons =
-        document.querySelectorAll(".choice");
-
-
-    // 2回押し防止
-
-    buttons.forEach(
-        button => {
-            button.disabled = true;
-        });
-
-
-
-    if (index === questions[current].answer) {
-
+    if (index === q.answer) {
         score++;
-
-        document
-            .getElementById("choice" + index)
-            .classList.add("correct");
-
-
+        buttons[index].classList.add('correct');
+        resultDiv.innerHTML = '正解！';
+    } else {
+        buttons[index].classList.add('wrong');
+        buttons[q.answer].classList.add('correct');
+        resultDiv.innerHTML = '不正解...';
     }
 
-    else {
-
-
-        document
-            .getElementById("choice" + index)
-            .classList.add("wrong");
-
-
-        document
-            .getElementById(
-                "choice" + questions[current].answer
-            )
-            .classList.add("correct");
-
-
-    }
-
-
-
-    document.getElementById("result")
-        .innerHTML =
-
-        index === questions[current].answer
-
-            ?
-
-            "正解！"
-
-            :
-
-            "不正解<br>正解は上の緑色です";
-
-
-
-    document.getElementById("choices")
-        .innerHTML +=
-
-        `
-
-<button 
-class="next-button"
-onclick="nextQuestion()">
-
-次の問題
-
-</button>
-
-`;
-
+    resultDiv.innerHTML += `
+        <button class="next-button" onclick="nextQuestion()">次の問題へ</button>
+    `;
 }
 
 
 
-
+// 次の問題へ、または終了処理 [2]
 function nextQuestion() {
-
-
     current++;
-
-
-    document.getElementById("result")
-        .innerHTML = "";
-
-
+    document.getElementById('result').innerHTML = '';
     if (current < questions.length) {
-
         showQuestion();
-
-    }
-
-    else {
-
-
-        let endTime = Date.now();
-
-
-        let elapsed =
-            Math.floor(
-                (endTime - startTime) / 1000
-            );
+    } else {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('question').innerHTML = '終了！';
+        document.getElementById('choices').innerHTML = `
+            ${questions.length}問中 ${score}問正解<br><br>
+            時間： ${formatTime(elapsed)}
+        `;
         saveHistory(score, elapsed);
-
-
-        document.getElementById("question")
-            .innerHTML = "終了";
-
-
-        document.getElementById("choices")
-            .innerHTML = "";
-
-
-        document.getElementById("result")
-            .innerHTML =
-
-            `
-<h2>結果</h2>
-
-${questions.length}問中
-${score}問正解
-
-<br><br>
-
-時間：
-${formatTime(elapsed)}
-
-`;
         showHistory();
         showChart();
-
     }
-
 }
 
-
+// その他の補助関数 (formatTime, saveHistory 等) は既存の [1] [2] をそのまま使用
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
 
 showQuestion();
