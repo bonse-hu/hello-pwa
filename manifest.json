@@ -1,6 +1,6 @@
 {
-  "name": "Hello PWA",
-  "short_name": "Hello",
+  "name": "三角関数トレーニング",
+  "short_name": "三角かんすー",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
