@@ -77,61 +77,61 @@ const allQuestions = [
 
 ];
 
+const f = (n) => (n === 1 ? "" : n);
+
 function generateQuestions(count) {
     const questions = [];
     const types = ['sin_cos', 'cos_sin', 'cos_cos', 'sin_sin'];
 
     for (let i = 0; i < count; i++) {
         const type = types[Math.floor(Math.random() * types.length)];
-        // 係数 a, b をランダムに決定 (a > b とすることで差を正にする)
-        let a = Math.floor(Math.random() * 8) + 2; // 2～9
-        let b = Math.floor(Math.random() * (a - 1)) + 1; // 1～a-1
+        let a = Math.floor(Math.random() * 8) + 2; 
+        let b = Math.floor(Math.random() * (a - 1)) + 1; 
         
         let qText = "";
         let correctAns = "";
         let dummy = [];
 
-        // 積和の公式の適用 (※ここから下の数式ロジックはソース外の追加情報です)
+        // 各ケースで f(n) を使用して係数を制御
         switch (type) {
-            case 'sin_cos': // sin A cos B = 1/2(sin(A+B) + sin(A-B))
-                qText = `\\sin ${a}x \\cos ${b}x`;
-                correctAns = `\\frac{1}{2}(\\sin ${a+b}x + \\sin ${a-b}x)`;
+            case 'sin_cos': 
+                qText = `\\sin ${f(a)}x \\cos ${f(b)}x`;
+                correctAns = `\\frac{1}{2}(\\sin ${f(a+b)}x + \\sin ${f(a-b)}x)`;
                 dummy = [
-                    `\\frac{1}{2}(\\sin ${a+b}x - \\sin ${a-b}x)`,
-                    `\\frac{1}{2}(\\cos ${a+b}x + \\cos ${a-b}x)`,
-                    `\\sin ${a+b}x + \\sin ${a-b}x`
+                    `\\frac{1}{2}(\\sin ${f(a+b)}x - \\sin ${f(a-b)}x)`,
+                    `\\frac{1}{2}(\\cos ${f(a+b)}x + \\cos ${f(a-b)}x)`,
+                    `\\sin ${f(a+b)}x + \\sin ${f(a-b)}x`
                 ];
                 break;
-            case 'cos_sin': // cos A sin B = 1/2(sin(A+B) - sin(A-B))
-                qText = `\\cos ${a}x \\sin ${b}x`;
-                correctAns = `\\frac{1}{2}(\\sin ${a+b}x - \\sin ${a-b}x)`;
+            case 'cos_sin': 
+                qText = `\\cos ${f(a)}x \\sin ${f(b)}x`;
+                correctAns = `\\frac{1}{2}(\\sin ${f(a+b)}x - \\sin ${f(a-b)}x)`;
                 dummy = [
-                    `\\frac{1}{2}(\\sin ${a+b}x + \\sin ${a-b}x)`,
-                    `\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`,
-                    `\\frac{1}{2}(\\sin ${a+a}x - \\sin ${b+b}x)`
+                    `\\frac{1}{2}(\\sin ${f(a+b)}x + \\sin ${f(a-b)}x)`,
+                    `\\frac{1}{2}(\\cos ${f(a+b)}x - \\cos ${f(a-b)}x)`,
+                    `\\frac{1}{2}(\\sin ${f(a+a)}x - \\sin ${f(b+b)}x)`
                 ];
                 break;
-            case 'cos_cos': // cos A cos B = 1/2(cos(A+B) + cos(A-B))
-                qText = `\\cos ${a}x \\cos ${b}x`;
-                correctAns = `\\frac{1}{2}(\\cos ${a+b}x + \\cos ${a-b}x)`;
+            case 'cos_cos': 
+                qText = `\\cos ${f(a)}x \\cos ${f(b)}x`;
+                correctAns = `\\frac{1}{2}(\\cos ${f(a+b)}x + \\cos ${f(a-b)}x)`;
                 dummy = [
-                    `\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`,
-                    `\\frac{1}{2}(\\sin ${a+b}x + \\sin ${a-b}x)`,
-                    `\\cos ${a+b}x + \\cos ${a-b}x`
+                    `\\frac{1}{2}(\\cos ${f(a+b)}x - \\cos ${f(a-b)}x)`,
+                    `\\frac{1}{2}(\\sin ${f(a+b)}x + \\sin ${f(a-b)}x)`,
+                    `\\cos ${f(a+b)}x + \\cos ${f(a-b)}x`
                 ];
                 break;
-            case 'sin_sin': // sin A sin B = -1/2(cos(A+B) - cos(A-B))
-                qText = `\\sin ${a}x \\sin ${b}x`;
-                correctAns = `-\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`;
+            case 'sin_sin': 
+                qText = `\\sin ${f(a)}x \\sin ${f(b)}x`;
+                correctAns = `-\\frac{1}{2}(\\cos ${f(a+b)}x - \\cos ${f(a-b)}x)`;
                 dummy = [
-                    `\\frac{1}{2}(\\cos ${a+b}x - \\cos ${a-b}x)`,
-                    `-\\frac{1}{2}(\\cos ${a+b}x + \\cos ${a-b}x)`,
-                    `-\\frac{1}{2}(\\sin ${a+b}x - \\sin ${a-b}x)`
+                    `\\frac{1}{2}(\\cos ${f(a+b)}x - \\cos ${f(a-b)}x)`,
+                    `-\\frac{1}{2}(\\cos ${f(a+b)}x + \\cos ${f(a-b)}x)`,
+                    `-\\frac{1}{2}(\\sin ${f(a+b)}x - \\sin ${f(a-b)}x)`
                 ];
                 break;
         }
 
-        // 選択肢のシャッフル処理 [1]
         let choices = shuffle([correctAns, ...dummy]);
         questions.push({
             question: `$ ${qText} = ?$`,
