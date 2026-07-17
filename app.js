@@ -443,15 +443,27 @@ function nextQuestion() {
     if (current < questions.length) {
         showQuestion();
     } else {
+        // クイズ終了時の処理
         const elapsed = Math.floor((Date.now() - startTime) / 1000);
         document.getElementById('question').innerHTML = '終了！';
         document.getElementById('choices').innerHTML = `
             ${questions.length}問中 ${score}問正解<br><br>
             時間： ${formatTime(elapsed)}
         `;
-        saveHistory(score, elapsed);
-        showHistory();
-        showChart();
+        
+        saveHistory(score, elapsed); // 履歴の保存
+        showHistory();               // 履歴リストの表示
+
+        // 【ここを修正】全問正解(5点)の場合のみグラフを表示
+        if (score === 5) {
+            showChart();
+        } else {
+            // 全問正解でない場合はグラフ（canvas）を隠すか、クリアする
+            const chartCanvas = document.getElementById('historyChart');
+            if (chartCanvas) {
+                chartCanvas.style.display = 'none'; // グラフを非表示にする
+            }
+        }
     }
 }
 
