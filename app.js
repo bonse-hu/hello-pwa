@@ -440,29 +440,55 @@ function answer(index) {
 function nextQuestion() {
     current++;
     document.getElementById('result').innerHTML = '';
+    
     if (current < questions.length) {
-        showQuestion();
+        showQuestion(); [1]
     } else {
         // クイズ終了時の処理
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const elapsed = Math.floor((Date.now() - startTime) / 1000); [1]
         document.getElementById('question').innerHTML = '終了！';
-        document.getElementById('choices').innerHTML = `
-            ${questions.length}問中 ${score}問正解<br><br>
-            時間： ${formatTime(elapsed)}
-        `;
         
-        saveHistory(score, elapsed); // 履歴の保存
-        showHistory();               // 履歴リストの表示
+        // 【修正】結果表示に「もう一度やる」と「履歴リセット」ボタンを追加
+        document.getElementById('choices').innerHTML = `
+            <div style="text-align:center; margin-bottom:20px;">
+                ${questions.length}問中 ${score}問正解<br>
+                時間： ${formatTime(elapsed)}
+            </div>
+            <button class="next-button" onclick="restartQuiz()">もう一度やる</button>
+            <button class="next-button" style="background:#888; margin-top:10px;" onclick="resetHistory()">履歴をリセット</button>
+        `; [1, 2]
 
-        // 【ここを修正】全問正解(5点)の場合のみグラフを表示
+        saveHistory(score, elapsed); [3]
+        showHistory(); [3]
+        
+        // 前回の回答に基づき、全問正解時のみグラフ表示
         if (score === 5) {
-            showChart();
-        } else {
-            // 全問正解でない場合はグラフ（canvas）を隠すか、クリアする
-            const chartCanvas = document.getElementById('historyChart');
-            if (chartCanvas) {
-                chartCanvas.style.display = 'none'; // グラフを非表示にする
-            }
+            showChart(); [3]
+        }
+    }
+}
+
+// クイズを最初からやり直す関数
+function restartQuiz() {
+    current = 0;
+    score = 0;
+    startTime = Date.now();
+    // 以前のセッションで実装した「問題をランダム生成する関数」を呼び出す
+    // questions = generateQuestions(5); 
+    showQuestion(); [3]
+    document.getElementById('result').innerHTML = '';
+}
+
+// 履歴を削除する関数
+function resetHistory() {
+    if (confirm('これまでの学習履歴をすべて削除しますか？')) {
+        localStorage.removeItem('quizHistory'); // 保存時のキー名に合わせてください
+        showHistory(); [3]
+        // グラフもクリアする
+        const chartCanvas = document.getElementById('historyChart');
+        if (chartCanvas) {
+            const ctx = chartCanvas.getContext('2d');
+            ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
         }
     }
 }
